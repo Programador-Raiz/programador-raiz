@@ -29,12 +29,13 @@ int main()
   printf("p1 = <%p>\n", p1);
   printf("p2 = <%p>\n", p2);
   
-  p2=p1;
-
+  *p1=*p2;
+  
   printf("p1 VALUE = <%c>\n", *p1);
   printf("p2 VALUE = <%c>\n", *p2);
   printf("p1 = <%p>\n", p1);
   printf("p2 = <%p>\n", p2);
+  printf("c1 = <%c>\n", c1);
   
 
   return 0;
