@@ -4,10 +4,26 @@
 #include <string.h>
 #include <sys/stat.h>
 
-//"cnpj":"61144150000163","setor":"alimentos","estado":"SP"
-char *remove_char(char *p, char remove)
+void remove_char(char *p, const char *charsToRemove)
 {
+  int toRemove[256] = {0};
 
+  if(NULL == p || NULL == charsToRemove)
+    return;
+
+  while (*charsToRemove) {
+    toRemove[*charsToRemove++] = 1;
+  }
+
+  char *pAux = p;
+
+  while(*p) {
+    if (!toRemove[*p])
+      *pAux++ = *p;
+    p++;
+  }
+
+  *pAux = 0x00;
 }
 
 int main()
@@ -15,7 +31,7 @@ int main()
   FILE *fp;
 
   struct stat s;
-  
+
   if (stat("./company.json", &s)){
     fprintf(stderr, "ERRO ao tentar obter stat\n");
     return 1;
@@ -27,26 +43,23 @@ int main()
      printf ("Houve um erro ao abrir o arquivo.\n");
      return 1;
   }
-  printf ("Arquivo aberto com sucesso.\n");
+  printf("Arquivo aberto com sucesso.\n");
 
   int tamanho = s.st_size;
 
   char *strMsg = (char *) malloc((tamanho+1) * sizeof(char));
 
-  if(fread(&strMsg[0], sizeof(char), tamanho, fp) != tamanho)  
+  if(fread(&strMsg[0], sizeof(char), tamanho, fp) != tamanho)
     printf("Erro na leitura do arquivo");
 
   strMsg[tamanho] = 0x00;
-  printf("conteudo: %s\n", strMsg);
+  const char* chartsToRemove = "{} \n";
 
-  strMsg = remove_char(strMsg, '}');
+  // printf("conteudo antes da limpeza: %s\n", strMsg);
+  remove_char(strMsg, chartsToRemove);
+  printf("conteudo depois da limpeza: %s\n", strMsg);
 
-  printf("conteudo: %s\n", strMsg);
-  
-  free(strMsg); 
-
-
-
+  free(strMsg);
   fclose (fp);
   return 0;
 }
